@@ -1,0 +1,21 @@
+.bg-transparent {
+  background-color: transparent;
+}
+
+body{
+  margin: 0%;
+}
+
+:host {
+  height: 100%;
+}
+
+.photo {
+  object-fit: contain;
+  height: 30px;
+}
+
+.card {
+  width: 20rem;
+  margin: 0 auto;
+}

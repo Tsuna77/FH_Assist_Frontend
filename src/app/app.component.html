@@ -1,0 +1,51 @@
+<mat-toolbar color="primary">
+  <div fxShow="true" fxHide.gt-sm="true">
+    <button mat-icon-button (click)="sidenav.toggle()">
+      <mat-icon>menu</mat-icon>
+    </button>
+  </div>
+  <h1><img class="photo" src="assets/img/bobby.png"><span class="light">Fun Hospital</span> Assistant</h1>
+  <div fxShow="true" fxHide.lt-md="true">
+    <a *ngIf="loggedIn" (click)="pageRecap()" mat-button>Récap</a>
+    <a *ngIf="loggedIn" (click)="pageSalles()" mat-button>Salles</a>
+    <a *ngIf="loggedIn" (click)="pageSoins()" mat-button>Soins</a>
+    <button *ngIf="!loggedIn" mat-button (click)="signInWithGoogle()">
+      <mat-icon>power_settings_new</mat-icon>
+      <span>Se connecter</span>
+    </button>
+    <button *ngIf="loggedIn" mat-button [matMenuTriggerFor]="menu" layout-align="end center">
+      <img class="photo" src="{{ user.photoUrl }}" />
+      <span>{{ user.firstName }}</span>
+    </button>
+    <mat-menu #menu="matMenu" layout-align="end center">
+      <button mat-menu-item (click)="signOut()">
+
+        <mat-icon>power_settings_new</mat-icon>
+        <span>Déconnection</span>
+      </button>
+    </mat-menu>
+  </div>
+</mat-toolbar>
+<mat-sidenav-container class="example-container">
+
+  <mat-sidenav color="primary" #sidenav fxLayout="column" mode="over" opened="false" fxHide.gt-sm="true">
+    <div fxLayout="column">
+
+      <button *ngIf="!loggedIn" mat-button (click)="signInWithGoogle()">
+        <mat-icon>power_settings_new</mat-icon>
+        <span>Se connecter</span>
+      </button>
+      <span flex></span>
+      <button *ngIf="loggedIn" mat-button [matMenuTriggerFor]="menu">
+        <img class="photo" src="{{ user.photoUrl }}" />
+        <span>{{ user.firstName }}</span>
+      </button>
+      <a *ngIf="loggedIn" (click)="pageRecap()" mat-button>Récap</a>
+      <a *ngIf="loggedIn" (click)="pageSalles()" mat-button>Salles</a>
+      <a *ngIf="loggedIn" (click)="pageSoins()" mat-button>Soins</a>
+    </div>
+  </mat-sidenav>
+  <mat-sidenav-content>
+    {{ loadPage() }}
+  </mat-sidenav-content>
+</mat-sidenav-container>
