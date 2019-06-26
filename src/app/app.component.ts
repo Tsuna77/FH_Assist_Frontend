@@ -25,6 +25,8 @@ export class AppComponent implements OnInit {
 
   private user: SocialUser;
   public loggedIn: boolean;
+  public Connecting: boolean;
+  public Connected: boolean;
 
   loadPage() {
 
@@ -39,11 +41,21 @@ export class AppComponent implements OnInit {
   }
 
   dologin(){
+    this.Connecting=true;
+    isDevMode && console.debug("Demande de connection au serveur");
     this.loginService.postLogin(this.user.idToken)
       .subscribe(
-        (loginData: Login) => this.login = { ...loginData }, // success path
-        error => this.error = error // error path
+        (loginData: Login) => {
+          this.login = { ...loginData },
+          this.Connecting=false,
+          this.Connected=true
+        }, // success path
+        error => {
+          this.error = error,
+          this.Connecting=false
+        } // error path
       );
+
 
   }
 
@@ -65,7 +77,6 @@ export class AppComponent implements OnInit {
         isDevMode && console.debug(this.user);
         this.loginService.googleLogin(this.config);
         this.dologin()
-        this.loginService.postLogin(this.user.idToken);
       }
     });
     isDevMode && console.debug("App starting...")

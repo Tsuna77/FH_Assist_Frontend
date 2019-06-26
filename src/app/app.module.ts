@@ -20,6 +20,7 @@ import { loginService } from "./api/api.service"
 
 
 import { secret } from '../environments/secret';
+import { PageComponent } from './page/page.component';
 
 let config = new AuthServiceConfig([
   {
@@ -38,7 +39,8 @@ export function provideConfig() {
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    PageComponent
   ],
   imports: [
 //    AppRoutingModule,
