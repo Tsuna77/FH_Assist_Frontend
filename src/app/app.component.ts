@@ -3,10 +3,17 @@ import { Component, OnInit } from '@angular/core';
 import { AuthService, SocialUser } from "angularx-social-login";
 import { GoogleLoginProvider } from "angularx-social-login";
 import { isDevMode } from '@angular/core';
-import { Config , configService} from './config/config.service';
-import {loginService, Login } from './api/api.service';
+import { Config, configService } from './config/config.service';
+import { loginService, Login } from './api/api.service';
 
+export class User {
+  socialUser: SocialUser;
+  state: number = User._ANONYMOUS;
 
+  static readonly _ANONYMOUS: number = 0;
+  static readonly _CONNECTING: number = 1;
+  static readonly _CONNECTED: number = 2;
+}
 
 @Component({
   selector: 'app-page',
@@ -20,19 +27,25 @@ export class AppComponent implements OnInit {
   login: Login;
 
   constructor(private authService: AuthService, private configService: configService, private loginService: loginService) { }
-
   title = 'Fun-hospital';
 
-  private user: SocialUser;
-  public loggedIn: boolean;
-  public Connecting: boolean;
-  public Connected: boolean;
+  user: User;
+
+  get userConnected(){
+    return User._CONNECTED;
+  }
+  get userConnecting(){
+    return User._CONNECTING;
+  }
+  get userAnonymous(){
+    return User._ANONYMOUS;
+  }
 
   loadPage() {
 
   }
 
-  getConfig(){
+  getConfig() {
     this.configService.getConfig()
       .subscribe(
         (configData: Config) => this.config = { ...configData }, // success path
@@ -40,27 +53,28 @@ export class AppComponent implements OnInit {
       );
   }
 
-  dologin(){
-    this.Connecting=true;
+  dologin() {
+    this.user.state = User._CONNECTING;
     isDevMode && console.debug("Demande de connection au serveur");
-    this.loginService.postLogin(this.user.idToken)
+    this.loginService.postLogin(this.user.socialUser.idToken)
       .subscribe(
         (loginData: Login) => {
           this.login = { ...loginData },
-          this.Connecting=false,
-          this.Connected=true
+          isDevMode && console.debug("Connecté");
+            this.user.state = User._CONNECTED
         }, // success path
         error => {
           this.error = error,
-          this.Connecting=false
+           isDevMode && console.debug("Connection refusé");
+            this.user.state = User._ANONYMOUS
         } // error path
       );
 
 
   }
 
-  showConfig(){
-    if (this.loggedIn) {
+  showConfig() {
+    if (this.user.state == User._CONNECTED) {
       isDevMode && console.debug("Affichage de la configuration dans les logs");
       isDevMode && console.debug(this.config);
 
@@ -68,12 +82,12 @@ export class AppComponent implements OnInit {
 
   }
   ngOnInit() {
-
+    this.user=new User();
     this.authService.authState.subscribe((user) => {
-      if (user != null){
+      if (user != null) {
         isDevMode && console.debug("Récupération de la session");
-        this.user = user;
-        this.loggedIn = (user != null);
+        this.user.socialUser = user;
+        this.user.state = User._CONNECTING;
         isDevMode && console.debug(this.user);
         this.loginService.googleLogin(this.config);
         this.dologin()

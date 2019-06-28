@@ -6,16 +6,16 @@
   </div>
   <h1><img class="photo" src="assets/img/bobby.png"><span class="light">Fun Hospital</span> Assistant</h1>
   <div fxShow="true" fxHide.lt-md="true">
-    <a *ngIf="loggedIn" (click)="pageRecap()" mat-button>Récap</a>
-    <a *ngIf="loggedIn" (click)="pageSalles()" mat-button>Salles</a>
-    <a *ngIf="loggedIn" (click)="pageSoins()" mat-button>Soins</a>
-    <button *ngIf="!loggedIn" mat-button (click)="signInWithGoogle()">
+    <a *ngIf="user.state == userConnected" (click)="pageRecap()" mat-button>Récap</a>
+    <a *ngIf="user.state == userConnected" (click)="pageSalles()" mat-button>Salles</a>
+    <a *ngIf="user.state == userConnected" (click)="pageSoins()" mat-button>Soins</a>
+    <button *ngIf="user.state == userAnonymous" mat-button (click)="signInWithGoogle()">
       <mat-icon>power_settings_new</mat-icon>
       <span>Se connecter</span>
     </button>
-    <button *ngIf="loggedIn" mat-button [matMenuTriggerFor]="menu" layout-align="end center">
-      <img class="photo" src="{{ user.photoUrl }}" />
-      <span>{{ user.firstName }}</span>
+    <button *ngIf="user.state == userConnected" mat-button [matMenuTriggerFor]="menu" layout-align="end center">
+      <img class="photo" src="{{ user.socialUser.photoUrl }}" />
+      <span>{{ user.socialUser.firstName }}</span>
     </button>
     <mat-menu #menu="matMenu" layout-align="end center">
       <button mat-menu-item (click)="signOut()">
@@ -31,18 +31,18 @@
   <mat-sidenav color="primary" #sidenav fxLayout="column" mode="over" opened="false" fxHide.gt-sm="true">
     <div fxLayout="column">
 
-      <button *ngIf="!loggedIn" mat-button (click)="signInWithGoogle()">
+      <button *ngIf="user.state == userAnonymous" mat-button (click)="signInWithGoogle()">
         <mat-icon>power_settings_new</mat-icon>
         <span>Se connecter</span>
       </button>
       <span flex></span>
-      <button *ngIf="loggedIn" mat-button [matMenuTriggerFor]="menu">
-        <img class="photo" src="{{ user.photoUrl }}" />
-        <span>{{ user.firstName }}</span>
+      <button *ngIf="user.state == userConnected" mat-button [matMenuTriggerFor]="menu">
+        <img class="photo" src="{{ user.socialUser.photoUrl }}" />
+        <span>{{ user.socialUser.firstName }}</span>
       </button>
-      <a *ngIf="loggedIn" (click)="pageRecap()" mat-button>Récap</a>
-      <a *ngIf="loggedIn" (click)="pageSalles()" mat-button>Salles</a>
-      <a *ngIf="loggedIn" (click)="pageSoins()" mat-button>Soins</a>
+      <a *ngIf="user.state == userConnected" (click)="pageRecap()" mat-button>Récap</a>
+      <a *ngIf="user.state == userConnected" (click)="pageSalles()" mat-button>Salles</a>
+      <a *ngIf="user.state == userConnected" (click)="pageSoins()" mat-button>Soins</a>
     </div>
   </mat-sidenav>
   <mat-sidenav-content>
